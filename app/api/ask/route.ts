@@ -3,10 +3,6 @@ import { oneLine, stripIndent } from 'common-tags'
 import { supabase } from '../../../utils/supabase'
 import { OpenAIStream } from '../../../utils/OpenAIStream'
 
-export const config = {
-  runtime: 'edge',
-}
-
 export async function POST(req: Request) {
   const { question } = (await req.json()) as {
     question?: string
