@@ -1,9 +1,14 @@
 import GPT3Tokenizer from 'gpt3-tokenizer'
 import { oneLine, stripIndent } from 'common-tags'
-import { supabase } from '../../../utils/supabase'
-import { OpenAIStream } from '../../../utils/OpenAIStream'
+import { supabase } from '../../utils/supabase'
+import { OpenAIStream } from '../../utils/OpenAIStream'
+import { NextRequest } from 'next/server'
 
-export async function POST(req: Request) {
+export const config = {
+  runtime: 'edge',
+}
+
+export default async function POST(req: NextRequest) {
   const { question } = (await req.json()) as {
     question?: string
   }
@@ -45,7 +50,7 @@ export async function POST(req: Request) {
   const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
   let tokenCount = 0
   let contextText = ''
-  console.log('documents: ', documents)
+  // console.log('documents: ', documents)
 
   if (documents) {
     for (let i = 0; i < documents.length; i++) {
@@ -62,7 +67,7 @@ export async function POST(req: Request) {
     }
   }
 
-  console.log('contextText: ', contextText)
+  // console.log('contextText: ', contextText)
 
   const systemContent = stripIndent(oneLine`
     You are a helpful Hootsuite representative who loves
