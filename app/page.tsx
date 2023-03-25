@@ -7,13 +7,7 @@ export default function Home() {
   const [answer, setAnswer] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
-  const ask = async () => {
-    const question = input.current?.value
-
-    if (!question) {
-      return
-    }
-
+  const ask = async (question: string) => {
     setAnswer('')
     setIsLoading(true)
 
@@ -40,9 +34,44 @@ export default function Home() {
     setIsLoading(false)
   }
 
+  const handleAskClick = () => {
+    const question = input.current?.value
+
+    if (!question) {
+      return
+    }
+
+    ask(question)
+  }
+
+  const askPredefinedQuestion = (question: string) => {
+    input.current!.value = question
+    ask(question)
+  }
+
   return (
     <main className="w-3/4 mx-auto py-4">
       <h1 className="text-4xl font-bold my-4">Ask Hootsuite</h1>
+      <p className="text-lg mb-4">
+        Ask any question and get an answer from the information available on
+        Hootsuite&apos;s website.
+      </p>
+      <p className="text-lg mb-4">
+        For example, try asking:
+        <button
+          className="underline italic p-1"
+          onClick={() => askPredefinedQuestion('What is Hootsuite?')}
+        >
+          What is Hootsuite?
+        </button>{' '}
+        or
+        <button
+          className="underline italic p-1"
+          onClick={() => askPredefinedQuestion("What is Hootsuite's mission?")}
+        >
+          What is Hootsuite&apos;s mission?
+        </button>
+      </p>
       <form>
         <input
           ref={input}
@@ -53,14 +82,15 @@ export default function Home() {
         <button
           type="submit"
           disabled={isLoading}
-          onClick={ask}
-          className="border-2 border-slate-600 cursor-pointer text-2xl py-2 px-4 block my-4 hover:bg-slate-800 hover:text-white"
+          onClick={handleAskClick}
+          className="inline-block border-2 border-slate-600 cursor-pointer text-2xl py-2 px-4 my-4 hover:bg-slate-800 hover:text-white"
         >
           Ask
         </button>
+
+        {isLoading && <span className="text-xl m-4">Answering...</span>}
       </form>
 
-      {isLoading && <p className="text-xl my-4">Answering...</p>}
       <p className="h-32 py-4 tracking-wide leading-relaxed text-xl">
         {answer}
       </p>
