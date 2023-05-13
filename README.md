@@ -1,12 +1,12 @@
-Simple question and answer app built using Openai's API, and supabase. Need these keys to run the app:
-`OPENAI_KEY`, `SUPABASE_KEY`, `SUPABASE_URL`.
+Simple question and answer app built using Next.js and Openai's API.
+
+1. set up vercel postgres database https://vercel.com/docs/storage/vercel-postgres/quickstart#create-a-postgres-database
+1. pull env variables from vercel to local `.env` file `pnpm vercel env pull .env`
+1. add `OPENAI_KEY` to .env file
+1. add the pages you want to scrape to `urls` array in `scripts/generateEmbedings.ts`.
+1. run `pnpm generateEmbedings` to scrape the pages and generate the embeddings.
 
 See this https://github.com/gannonh/gpt3.5-turbo-pgvector/tree/master for more info on how to set up the database.
-
-Once you have the keys, add them to a `.env` file in the root directory.
-Then add the pages you want to scrape to `urls` array in `scripts/generateEmbedings.ts`.
-
-Run `pnpm vite-node scripts/generateEmbedings.ts` to scrape the pages and generate the embeddings.
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
