@@ -54,7 +54,7 @@ export default function Home() {
       <h1 className="text-4xl font-bold my-4">Ask Hootsuite</h1>
       <p className="text-lg mb-4">
         Ask any question and get an answer from the information available on{' '}
-        <a href="www.hootsuite.com" className="underline">
+        <a href="www.hootsuite.com" target="_blank" className="underline">
           Hootsuite&apos;s website
         </a>
         .
