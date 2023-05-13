@@ -1,10 +1,11 @@
 import dotenv from 'dotenv'
 import { Configuration, OpenAIApi } from 'openai'
 import * as cheerio from 'cheerio'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 dotenv.config()
-
-const supabase = await import('../utils/supabase').then((m) => m.supabase)
 
 const docSize: number = 2000
 
@@ -29,13 +30,18 @@ async function getUrls() {
 
     const [{ embedding }] = embeddingResponse.data.data
 
-    const res = await supabase.from('documents').insert({
-      content: input,
-      embedding,
-      url,
+    const document = await prisma.documents.create({
+      data: {
+        content: input,
+        url,
+      },
     })
 
-    console.log('supabase response', res)
+    await prisma.$executeRaw`
+      UPDATE "Documents"
+      SET "embedding" = ${embedding}::vector
+      WHERE "id" = ${document.id}
+    `
   }
 }
 
@@ -45,7 +51,7 @@ async function getDocuments(urls: string[]) {
     const response = await fetch(url)
     const html = await response.text()
     const $ = cheerio.load(html)
-    const articleText = $('#__next').text()
+    const articleText = $('#__next > main').text()
 
     let start = 0
     while (start < articleText.length) {

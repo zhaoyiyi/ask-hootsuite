@@ -1,14 +1,12 @@
 import GPT3Tokenizer from 'gpt3-tokenizer'
 import { oneLine, stripIndent } from 'common-tags'
-import { supabase } from '../../utils/supabase'
 import { OpenAIStream } from '../../utils/OpenAIStream'
 import { NextRequest } from 'next/server'
+import { PrismaClient } from '@prisma/client'
 
-export const config = {
-  runtime: 'edge',
-}
+const prisma = new PrismaClient()
 
-export default async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const { question } = (await req.json()) as {
     question?: string
   }
@@ -37,20 +35,21 @@ export default async function POST(req: NextRequest) {
 
   const [{ embedding }] = embeddingData.data
 
-  const { data: documents, error } = await supabase.rpc('match_documents', {
-    query_embedding: embedding,
-    similarity_threshold: 0.5,
-    match_count: 3,
-  })
-
-  if (error) {
-    throw error
-  }
+  const documents: { url: string; content: string }[] = await prisma.$queryRaw`
+    SELECT
+      "id",
+      "content",
+      "url",
+      1 - (embedding <=> ${embedding}::vector) as similarity
+    FROM "Documents"
+    WHERE 1 - (embedding <=> ${embedding}::vector) > .5
+    ORDER BY  similarity DESC
+    LIMIT 5
+  `
 
   const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
   let tokenCount = 0
   let contextText = ''
-  // console.log('documents: ', documents)
 
   if (documents) {
     for (let i = 0; i < documents.length; i++) {
@@ -66,8 +65,6 @@ export default async function POST(req: NextRequest) {
       contextText += `${content.trim()}\nSOURCE: ${url}\n---\n`
     }
   }
-
-  // console.log('contextText: ', contextText)
 
   const systemContent = stripIndent(oneLine`
     You are a helpful Hootsuite representative who loves

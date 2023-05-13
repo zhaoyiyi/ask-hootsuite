@@ -11,7 +11,7 @@ export default function Home() {
     setAnswer('')
     setIsLoading(true)
 
-    const res = await fetch('/api/ask', {
+    const res = await fetch('/ask', {
       method: 'POST',
       body: JSON.stringify({ question }),
     })
@@ -53,8 +53,11 @@ export default function Home() {
     <main className="w-3/4 mx-auto py-4">
       <h1 className="text-4xl font-bold my-4">Ask Hootsuite</h1>
       <p className="text-lg mb-4">
-        Ask any question and get an answer from the information available on
-        Hootsuite&apos;s website.
+        Ask any question and get an answer from the information available on{' '}
+        <a href="www.hootsuite.com" className="underline">
+          Hootsuite&apos;s website
+        </a>
+        .
       </p>
       <p className="text-lg mb-4">
         For example, try asking:
@@ -67,9 +70,9 @@ export default function Home() {
         or
         <button
           className="underline italic p-1"
-          onClick={() => askPredefinedQuestion("What is Hootsuite's mission?")}
+          onClick={() => askPredefinedQuestion('What is OwlyWriter AI?')}
         >
-          What is Hootsuite&apos;s mission?
+          What is OwlyWriter AI?
         </button>
       </p>
       <form>
